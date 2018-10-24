@@ -15,6 +15,9 @@ apiget.pkg = 'show-package'
 const dump = require('./fun/writefile')
 const myClose = require('./bin/close')
 var myobjs = {}
+var change = {}
+myobjs.change = change
+
 
 async function runtime (x) {
 	try {
@@ -26,7 +29,9 @@ async function runtime (x) {
 		myobjs.network = await pagein(mytoken, apishow.networks)
 		//myobjs.range = await pagein(mytoken, apishow.ranges)
 		myobjs.host = await pagein(mytoken, apishow.hosts)
-		myobjs.change = await grabin(mytoken, apiget.pub)
+		var lastpub = await grabin(mytoken, apiget.pub)
+		let tstamp = lastpub['publish-time'].posix
+		myobjs.change[tstamp] = await lastpub
 		dump('last', myobjs)
 		console.dir(await typeof myobjs)
 		const myend = await myClose(mytoken)
@@ -40,5 +45,5 @@ async function runtime (x) {
 }
 
 
-runtime('something')
+runtime('opb')
 
