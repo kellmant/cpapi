@@ -42,8 +42,8 @@ async function runtime (x) {
 		const myend = await myClose(mytoken)
 		console.log('Logout')
 		console.log(await myend)
-	} catch (err) {
-		console.log(err.response)
+	} catch (error) {
+		console.log(error.response.data)
 		console.log('PROGRAM ERROR')
 	} finally {
 		console.log('PROGRAM EXIT')
