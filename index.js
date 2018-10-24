@@ -43,7 +43,7 @@ async function runtime (x) {
 		console.log('Logout')
 		console.log(await myend)
 	} catch (err) {
-		console.log(err.message)
+		console.log(err.response)
 		console.log('PROGRAM ERROR')
 	} finally {
 		console.log('PROGRAM EXIT')

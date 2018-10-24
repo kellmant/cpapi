@@ -5,7 +5,7 @@
 // constructor should be done through class method
 //
 const Etcd = require('node-etcd')
-const etcdObjectify = require('etcd-result-objectify')
+//const etcdObjectify = require('etcd-result-objectify')
 
 
 module.exports.read = function (x) {
@@ -82,7 +82,7 @@ module.exports.objectify = function (x) {
 			if (err) {
 				reject(err)
 			} else {
-				const resObj = etcdObjectify(res.node)
+				//const resObj = etcdObjectify(res.node)
 				//console.log(typeof resObj)
 				resolve(resObj)
 			}
