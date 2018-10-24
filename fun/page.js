@@ -30,7 +30,6 @@ module.exports = async (cpSession, mycmd) => {
 			while (myarr.total >= inoffset) {
 				console.log('From ' + myarr.from + ' to ' + myarr.to + ' of ' + myarr.total + ' indexed')
 				inoffset = Number(myarr.to)
-				console.log(myarr.to + ' inoffset is ' + inoffset)
 				myApi.setCnt(inoffset, pglimit)
 				myobj.push(myarr)
 				myarr = await myApi.apiPost()
