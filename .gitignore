@@ -10,6 +10,7 @@ credentials
 .vim*
 KEYSTORE*
 last.json
+backup.json
 .cache
 .rnd
 *.pem
