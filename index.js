@@ -21,21 +21,27 @@ myobjs.change = change
 
 async function runtime (x) {
 	try {
+		console.log(' logging into api')
 		let mycred = await myCredentials(x)
 		const mytoken = await myAuth(mycred)
-		console.dir(await mytoken)
+		console.log(' Starting session: ' + await mytoken.uid)
+		console.log('Collecting policy packages . . . ')
 		myobjs.policy = await pagein(mytoken, apishow.pkgs)
+		console.log('Collecting gateways and servers info . . . ')
 		myobjs.gateway = await pagein(mytoken, apishow.gws)
+		console.log('Collecting network objects . . . ')
 		myobjs.network = await pagein(mytoken, apishow.networks)
 		//myobjs.range = await pagein(mytoken, apishow.ranges)
+		console.log('Collecting host objects . . . ')
 		myobjs.host = await pagein(mytoken, apishow.hosts)
 		var lastpub = await grabin(mytoken, apiget.pub)
 		let tstamp = lastpub['publish-time'].posix
 		myobjs.change[tstamp] = await lastpub
 		dump('last', myobjs)
-		console.dir(await typeof myobjs)
+		console.log('api session ' + mytoken.uid + ' COMPLETED object extraction: ' + myobjs.length)
 		const myend = await myClose(mytoken)
-		console.dir(await myend)
+		console.log('Logout')
+		console.log(await myend)
 	} catch (err) {
 		console.log(err.message)
 		console.log('PROGRAM ERROR')

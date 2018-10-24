@@ -22,9 +22,9 @@ async function runtime (x) {
 	try {
 		let mycred = await myCredentials(x)
 		const mytoken = await myAuth(mycred)
-		console.dir(await mytoken)
+		console.dir(await mytoken.uid)
 		myobjs = await pagein(mytoken, apishow.objects)
-		dump('backup', myobjs.objects)
+		dump('backup', myobjs)
 		console.dir(await typeof myobjs)
 		const myend = await myClose(mytoken)
 		console.dir(await myend)
