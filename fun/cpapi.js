@@ -8,12 +8,11 @@ module.exports = function (x) {
 	return new Promise(function(resolve, reject) {
 		axios.defaults.headers.common['Accept'] = 'application/json'
 		axios(x)
-		.then(function (res, err) {
-			if (err) {
-				reject(err)
-			} else {
-				resolve(res)
-			}
+		.then(response => {
+			resolve(response)
+		})
+		.catch(error => {
+	        	reject(error)
 		})
 	})
 }
