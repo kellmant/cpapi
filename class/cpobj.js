@@ -10,7 +10,8 @@ module.exports = class CPobj {
 
 	constructor(x) {
 		this.name = x.name || 'no name'
-		//this.type = x.type
+		this.type = x.type
+		this.uid = x.uid
 		if (x.comments) {
 		this.comments = x.comments
 		}
@@ -46,6 +47,8 @@ module.exports = class CPobj {
 		this['ipv6-address'] = x['ipv6-address']
 		}
 		this['ignore-warnings'] = 'true'
+		delete this.type
+		delete this.uid
 		return this
 	}
 
@@ -63,6 +66,8 @@ module.exports = class CPobj {
 		this['mask-length6'] = x['mask-length6']
 		}
 		this['ignore-warnings'] = true
+		delete this.type
+		delete this.uid
 		return this
 	}
 

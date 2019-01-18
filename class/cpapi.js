@@ -127,8 +127,8 @@ module.exports = class Cpapi {
 
 	async apiPost () {
 		this.response = {}
-		//this.response = await myApi(this).catch((error) => { console.log(error.response)})
-		this.response = await myApi(this)
+		this.response = await myApi(this).catch((error) => { console.log(error.response.data)})
+		//this.response = await myApi(this)
 		return await this.response.data
 	}
 
