@@ -25,17 +25,21 @@ const path = require('path');
 const scriptname = 'auth';
 const classcall = `../class/${scriptname}`
 const Cpsession = require(classcall)
-
+const Keystore = require('../class/keystore')
+//const keydir = '_session/535a8f8e-8820-4e80-add8-fdac1ffd314a/token'
 // example runtime for your class method
 //
 
 module.exports = async (mytoken) => {
 	try {
 		const mySession = new Cpsession()
-		const endToken = await mySession.closeToken(mytoken)
+		var endToken = await mySession.closeToken(mytoken)
+		const myStore = new Keystore()
 		return await endToken.data
-	} catch (err) {
-		console.log('ERROR IN SESSION LOGOUT for ' + mytoken)
+	} catch (error) {
+		console.log('ERROR IN SESSION LOGOUT')
+		console.dir(mytoken)
+		console.log(error.response.data)
 		return process.exit(1)
 	}
 }

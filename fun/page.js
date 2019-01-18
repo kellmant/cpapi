@@ -38,8 +38,7 @@ module.exports = async (cpSession, mycmd) => {
 		} else {
 		return await myarr
 		}
-	} catch (err) {
-		console.log(err.message)
-		throw new Error(err)
+	} catch (error) {
+		console.log(error.response.data)
 	}
 }

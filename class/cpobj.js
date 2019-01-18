@@ -45,6 +45,7 @@ module.exports = class CPobj {
 		if (x['ipv6-address']) {
 		this['ipv6-address'] = x['ipv6-address']
 		}
+		this['ignore-warnings'] = 'true'
 		return this
 	}
 
@@ -61,6 +62,7 @@ module.exports = class CPobj {
 		if (x['mask-length6']) {
 		this['mask-length6'] = x['mask-length6']
 		}
+		this['ignore-warnings'] = true
 		return this
 	}
 

@@ -26,6 +26,10 @@
   "homepage": "https://github.com/kellmant/cpapi#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "datalib": "^1.9.1",
+    "express": "^4.16.4",
+    "namor": "^1.1.1",
     "node-etcd": "^7.0.0"
   }
 }

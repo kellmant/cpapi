@@ -3,13 +3,9 @@ const myAuth = require('./bin/auth')
 const pagein = require('./fun/page')
 const grabin = require('./fun/grab')
 //
-const apishow = {}
-apishow.pkgs = 'show-packages'
-apishow.gws = 'show-gateways-and-servers'
-apishow.networks = 'show-networks'
-apishow.ranges = 'show-address-ranges'
-apishow.hosts = 'show-hosts'
-apishow.objects = 'show-objects'
+const dataobj = {}
+dataobj.mycmd = 'show-objects'
+dataobj.type = 'object'
 const apiget = {}
 apiget.pub = 'show-last-published-session'
 apiget.pkg = 'show-package'
@@ -23,13 +19,13 @@ async function runtime (x) {
 		let mycred = await myCredentials(x)
 		const mytoken = await myAuth(mycred)
 		console.dir(await mytoken.uid)
-		myobjs = await pagein(mytoken, apishow.objects)
+		myobjs = await pagein(mytoken, dataobj.mycmd)
 		dump('backup', myobjs)
-		console.dir(await typeof myobjs)
+		//console.log(await typeof myobjs)
 		const myend = await myClose(mytoken)
-		console.dir(await myend)
-	} catch (err) {
-		console.log(err.message)
+		console.log(await myend)
+	} catch (error) {
+		console.log(error.response)
 		console.log('PROGRAM ERROR')
 	} finally {
 		console.log('PROGRAM EXIT')

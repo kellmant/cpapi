@@ -3,8 +3,10 @@ const myAuth = require('./bin/auth')
 const pagein = require('./fun/page')
 const grabin = require('./fun/grab')
 //
+var dl = require('datalib');
 const rebuild = require('./last.json')
 const Cpclass = require('./class/cpobj')
+const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'net/'
 

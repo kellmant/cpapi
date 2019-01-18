@@ -34,8 +34,8 @@ module.exports = async (myauth) => {
 		mySession.setAuth(myauth)
 		var mytoken = await mySession.getToken()
 		return await mytoken.data
-	} catch (err) {
-		console.log('ERROR IN SESSION LOGIN ' + err.response.data)
+	} catch (error) {
+		console.log('ERROR IN SESSION LOGIN ' + error.response.data)
 		console.log(err.response.status)
 		console.log(err.response.statusText)
 		return process.exit(1)
