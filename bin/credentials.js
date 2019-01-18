@@ -19,7 +19,6 @@ module.exports = async (x) => {
 	try {
 		let keydir = `ctrl/cfg/mg/${x}/config_system/`
 		const myStore = new Keystore()
-		myStore.setKeyhost('keystore.east1')
 		auth.name = await myStore.getKey(keydir + gname)
 		auth.passwd = await myStore.getKey(keydir + gpass)
 		auth.host = await myStore.getKey(keydir + ghost)

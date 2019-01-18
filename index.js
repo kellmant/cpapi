@@ -35,7 +35,7 @@ async function runtime (x) {
 		console.log('Collecting host objects . . . ')
 		myobjs.host = await pagein(mytoken, apishow.hosts)
 		var lastpub = await grabin(mytoken, apiget.pub)
-		let tstamp = lastpub['publish-time'].posix
+		let tstamp = await lastpub['publish-time'].posix
 		myobjs.change[tstamp] = await lastpub
 		dump('last', myobjs)
 		console.log('api session ' + mytoken.uid + ' COMPLETED object extraction: ' + myobjs.length)
