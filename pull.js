@@ -45,7 +45,7 @@ async function getdata(x) {
 		var lastpub = await grabin(mytoken, apiget.pub)
 		let tstamp = await lastpub['publish-time'].posix
 		myobjs.change[tstamp] = await lastpub
-		//dump('last', myobjs)
+		dump('last', myobjs)
 		console.log('api session ' + mytoken.uid + ' COMPLETED object extraction ')
 		const myend = await myClose(mytoken)
 		console.log('Logout')

@@ -15,6 +15,9 @@ module.exports = class CPobj {
 		if (x.comments) {
 		this.comments = x.comments
 		}
+		if (x.color) {
+		this.color = x.color
+		}
 	}
 
 	dump (x) {
