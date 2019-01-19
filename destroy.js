@@ -8,6 +8,7 @@ const myCredentials = require('./bin/credentials')
 const myAuth = require('./bin/auth')
 const pagein = require('./fun/page')
 const postobj = require('./fun/post')
+const delobj = require('./fun/delobj')
 const grabin = require('./fun/grab')
 //
 const apishow = {}
@@ -117,7 +118,7 @@ async function proctype (inkey) {
 	for (var key in inkey) {
 		let a = inkey[key].key
 		let b = a.split('/')
-		mycmd = 'add-' + b[2]
+		mycmd = 'delete-' + b[2]
 		mytypes[mycmd] = await needkeys(a)
 	}
 	return await mytypes
@@ -137,24 +138,24 @@ async function dumpout(x) {
 }
 
 async function postcmd(x) {
-	let myout = {}
+	let mypubsess = {}
 	for (var key in x) {
 		for (var vals in x[key]) {
-			await postobj(mytoken, key, x[key][vals])
+			await delobj(mytoken, key, x[key][vals])
 		}
-		myout = await pubchange()
+		mypubsess = await pubchange()
 	}
-	return await myout
+	return await mypubsess
 }
 
-async function pubchange(x) {
+async function pubchange() {
 		let mypubrs = {}
 		var myApi = new CpApi(mytoken)
 		myApi.setCmd('publish')
 		myApi.rmData()
 		myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(6000)
+		await sleep(5000)
 		return await mypubres
 }
 

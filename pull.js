@@ -4,6 +4,7 @@ const pagein = require('./fun/page')
 const grabin = require('./fun/grab')
 //
 const apishow = {}
+apishow.grps = 'show-groups'
 apishow.pkgs = 'show-packages'
 apishow.gws = 'show-gateways-and-servers'
 apishow.networks = 'show-networks'
@@ -34,6 +35,8 @@ async function getdata(x) {
 		myobjs.policy = await pagein(mytoken, apishow.pkgs)
 		console.log('Collecting gateways and servers info . . . ')
 		myobjs.gateway = await pagein(mytoken, apishow.gws)
+		console.log('Collecting group info . . . ')
+		myobjs.group = await pagein(mytoken, apishow.grps)
 		console.log('Collecting network objects . . . ')
 		myobjs.network = await pagein(mytoken, apishow.networks)
 		//myobjs.range = await pagein(mytoken, apishow.ranges)

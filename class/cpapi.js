@@ -119,6 +119,11 @@ module.exports = class Cpapi {
 		return this
 	}
 
+	delObj (x) {
+		this.data.name = x.name
+		return this
+	}
+
 	print () {
 		console.dir(this)
 		console.log('\n')
