@@ -4,3 +4,5 @@ If you do not know how to install and run these files, you probably shouldn't ri
 
 Kellman
 
+export APIDOM=<your management domain name>
+
