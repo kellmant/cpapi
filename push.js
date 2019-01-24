@@ -31,9 +31,8 @@ const Cpclass = require('./class/cpobj')
 const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'obj/'
-const myapidom = process.env.APIDOM
 
-startsession(myapidom)
+startsession()
 .then(gettype)
 .then(proctype)
 .then(postcmd)
@@ -41,10 +40,10 @@ startsession(myapidom)
 .then(endsession)
 .then(console.log)
 
-async function startsession(x) {
+async function startsession() {
 	try {
 		console.log(' logging into api')
-		let mycred = await myCredentials(x)
+		let mycred = await myCredentials()
 		mytoken = await myAuth(mycred)
 		return await mytoken
 	} catch (error) {

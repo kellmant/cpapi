@@ -15,9 +15,11 @@ var gname = 'mgmt_admin_name'
 var gpass = 'mgmt_admin_passwd'
 var ghost = 'hostname'
 
-module.exports = async (x) => {
+const myapidom = process.env.APIDOM
+
+module.exports = async () => {
 	try {
-		let keydir = `ctrl/cfg/mg/${x}/config_system/`
+		let keydir = `ctrl/cfg/mg/${myapidom}/config_system/`
 		const myStore = new Keystore()
 		auth.name = await myStore.getKey(keydir + gname)
 		auth.passwd = await myStore.getKey(keydir + gpass)

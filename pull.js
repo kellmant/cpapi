@@ -25,15 +25,15 @@ const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'obj/'
 
-const myapidom = process.env.APIDOM
+//const myapidom = process.env.APIDOM
 
-getdata(myapidom)
+getdata()
 .then(savekeys)
 
-async function getdata(x) {
+async function getdata() {
 	try {
 		console.log(' logging into api')
-		let mycred = await myCredentials(x)
+		let mycred = await myCredentials()
 		const mytoken = await myAuth(mycred)
 		console.log(' Starting session: ' + await mytoken.uid)
 		console.log('Collecting policy packages . . . ')

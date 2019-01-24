@@ -13,13 +13,11 @@ const dump = require('./fun/writefile')
 const myClose = require('./bin/close')
 var myobjs = {}
 
-const myapidom = process.env.APIDOM
+runtime()
 
-runtime(myapidom)
-
-async function runtime (x) {
+async function runtime () {
 	try {
-		let mycred = await myCredentials(x)
+		let mycred = await myCredentials()
 		const mytoken = await myAuth(mycred)
 		console.dir(await mytoken.uid)
 		myobjs = await pagein(mytoken, dataobj.mycmd)

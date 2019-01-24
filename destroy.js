@@ -34,10 +34,18 @@ const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'obj/'
 
-async function startsession(x) {
+startsession()
+.then(gettype)
+.then(proctype)
+.then(postcmd)
+.then(console.log)
+.then(endsession)
+.then(console.log)
+
+async function startsession() {
 	try {
 		console.log(' logging into api')
-		let mycred = await myCredentials(x)
+		let mycred = await myCredentials()
 		mytoken = await myAuth(mycred)
 		return await mytoken
 	} catch (error) {
@@ -115,10 +123,3 @@ async function pubchange() {
 		return await mypubres
 }
 
-startsession('opb')
-.then(gettype)
-.then(proctype)
-.then(postcmd)
-.then(console.log)
-.then(endsession)
-.then(console.log)
