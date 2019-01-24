@@ -17,9 +17,9 @@ async function runtime () {
 		console.log(await myobj)
 		console.log(await myarr)
 		var mykeys = await dl.keys(rebuild)
-		var myvals = await dl.accessor('name', rebuild)
-		console.log(await myvals)
+		//var mytree = await dl.treejson(rebuild, mykeys)
 		console.log(await mykeys)
+		//console.log(await mytree)
 	} catch (err) {
 		console.log(err.message)
 		console.log('PROGRAM ERROR')

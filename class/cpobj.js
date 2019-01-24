@@ -75,12 +75,12 @@ module.exports = class CPobj {
 	}
 
 	group (x) {
-		const mymembers = {}
-		for (var i in x) {
-		const myGroups = Object.keys(x).reduce((p, c) => ({...p, [c]: x[c]}), {})
-			mymembers.push(x)
-		}
-		this.members = x.members
+		this.members = [x.members]
+		return this
+	}
+
+	groupArr (x) {
+		this.members = x
 		return this
 	}
 

@@ -31,6 +31,15 @@ const Cpclass = require('./class/cpobj')
 const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'obj/'
+const myapidom = process.env.APIDOM
+
+startsession(myapidom)
+.then(gettype)
+.then(proctype)
+.then(postcmd)
+.then(console.log)
+.then(endsession)
+.then(console.log)
 
 async function startsession(x) {
 	try {
@@ -158,10 +167,3 @@ async function pubchange(x) {
 		return await mypubres
 }
 
-startsession('opb')
-.then(gettype)
-.then(proctype)
-.then(postcmd)
-.then(console.log)
-.then(endsession)
-.then(console.log)

@@ -1,3 +1,4 @@
+// destroy.js to remove objects in cpapi
 // load keystore tools to use etcd as a var cache
 var Etcd = require('node-etcd');
 const myKeystore = process.env.ETCDCTL_ENDPOINTS
@@ -62,51 +63,6 @@ async function endsession() {
 
 function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function savekeys(rebuild) {
-	try {
-		var cpRes = []
-		var myCpdb = Object.keys(rebuild)
-		let netops = rebuild.network.objects
-		let hostops = rebuild.host.objects
-		Object.keys(netops).forEach(function(key) {
-			const Cpobj = new Cpclass(netops[key])
-			let mytype = Cpobj.type
-			let myuid = Cpobj.uid
-			let mynet = Cpobj.network(netops[key])
-			let mykey = {}
-			let netip = mynet.subnet4
-			if (mynet.subnet4) {
-			//let netdir = netip.replace(/\./g, '/')
-			let netdir = mytype + '/' + myuid
-			mykey.key = netroot + netdir 
-			mykey.value = mynet
-			setKey(mykey)
-			}
-		});
-		Object.keys(hostops).forEach(function(key) {
-			const Cpobj = new Cpclass(hostops[key])
-			let mytype = Cpobj.type
-			let myuid = Cpobj.uid
-			let myhost = Cpobj.host(hostops[key])
-			let mykey = {}
-			let hostip = myhost['ipv4-address']
-			if (myhost['ipv4-address']) {
-			//let hostdir = hostip.replace(/\./g, '/')
-			let hostdir = mytype + '/' + myuid
-			mykey.key = netroot + hostdir 
-			mykey.value = myhost
-			setKey(mykey)
-			}
-		});
-		console.dir(' ')
-	} catch (err) {
-		console.log(err.message)
-		console.log('savekeys ERROR')
-	} finally {
-		console.log('savekeys EXIT')
-	}
 }
 
 async function gettype() {

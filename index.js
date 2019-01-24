@@ -18,6 +18,9 @@ var myobjs = {}
 var change = {}
 myobjs.change = change
 
+const myapidom = process.env.APIDOM
+
+runtime(myapidom)
 
 async function runtime (x) {
 	try {
@@ -51,5 +54,4 @@ async function runtime (x) {
 }
 
 
-runtime('opb')
 

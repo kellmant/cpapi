@@ -13,6 +13,9 @@ const dump = require('./fun/writefile')
 const myClose = require('./bin/close')
 var myobjs = {}
 
+const myapidom = process.env.APIDOM
+
+runtime(myapidom)
 
 async function runtime (x) {
 	try {
@@ -33,5 +36,4 @@ async function runtime (x) {
 }
 
 
-runtime('opb')
 

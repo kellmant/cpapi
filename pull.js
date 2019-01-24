@@ -25,6 +25,11 @@ const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'obj/'
 
+const myapidom = process.env.APIDOM
+
+getdata(myapidom)
+.then(savekeys)
+
 async function getdata(x) {
 	try {
 		console.log(' logging into api')
@@ -67,6 +72,7 @@ async function savekeys(rebuild) {
 		var myCpdb = Object.keys(rebuild)
 		let netops = rebuild.network.objects
 		let hostops = rebuild.host.objects
+		let grpops = rebuild.group.objects
 		Object.keys(netops).forEach(function(key) {
 			const Cpobj = new Cpclass(netops[key])
 			let mytype = Cpobj.type
@@ -97,6 +103,29 @@ async function savekeys(rebuild) {
 			setKey(mykey)
 			}
 		});
+		Object.keys(grpops).forEach(function(key) {
+			const Cpobj = new Cpclass(grpops[key])
+			var mygrp = {}
+			var arrmembers = []
+			let mytype = Cpobj.type
+			let myuid = Cpobj.uid
+			var arrstring = Cpobj.group(grpops[key])
+			for (var g in arrstring.members) {
+				for (var h in arrstring.members[g]) {
+					arrmembers.push(arrstring.members[g][h].name)
+					//console.log(arrstring.members[g][h].name)
+				}
+			}
+			let mykey = {}
+			let grpdir = mytype + '/' + myuid
+			mykey.key = netroot + grpdir 
+			Cpobj.groupArr(arrmembers)
+			delete Cpobj.uid
+			delete Cpobj.type
+			mykey.value = Cpobj
+			setKey(mykey)
+			console.dir(Cpobj)
+		});
 		console.dir(' ')
 	} catch (err) {
 		console.log(err.message)
@@ -107,5 +136,3 @@ async function savekeys(rebuild) {
 }
 
 
-getdata('opb')
-.then(savekeys)

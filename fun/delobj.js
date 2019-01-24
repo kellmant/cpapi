@@ -23,7 +23,7 @@ module.exports = async (cpSession, mycmd, mydata) => {
 		myarr = await myApi.apiPost()
 		return await myarr
 	} catch (error) {
-		//return error.response.data
+		//return await error.response.data
 		return
 		//console.log(error.response.data)
 	}
