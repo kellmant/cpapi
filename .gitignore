@@ -11,6 +11,7 @@ credentials
 KEYSTORE*
 last.json
 backup.json
+diff.json
 .cache
 .rnd
 *.pem
