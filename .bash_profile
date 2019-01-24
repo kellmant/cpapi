@@ -439,5 +439,7 @@ if [ -f ~/bin/ctrl ] ; then
 echo "run 'ctrl' for help with API Infrastructure controller."
 echo
 fi
+APIDOM=$(etcdctl ls ctrl/cfg/mg | cut -d '/' -f 5)
+export APIDOM
 #yoda-said 2>/dev/null
 
