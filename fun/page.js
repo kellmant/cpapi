@@ -15,12 +15,15 @@ const Cpapi = require('../class/cpapi')
 const path = require('path');
 const scriptname = path.basename(__filename);
 
-module.exports = async (cpSession, mycmd) => {
+module.exports = async (cpSession, mycmd, mydata) => {
 	try {
 		var myres = []
 		var myarr = {}
 		var myobj = []
 		const myApi = new Cpapi(cpSession)
+		if (mydata) {
+			myApi.setData(mydata)
+		}
 		myApi.setCnt(myoffset, pglimit)
 		myApi.setDetail(detail)
 		myApi.setCmd(mycmd)
