@@ -124,7 +124,7 @@ async function savekeys(rebuild) {
 			delete Cpobj.type
 			mykey.value = Cpobj
 			setKey(mykey)
-			console.dir(Cpobj)
+			//console.dir(Cpobj)
 		});
 		console.dir(' ')
 	} catch (err) {
