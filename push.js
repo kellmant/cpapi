@@ -108,6 +108,7 @@ async function savekeys(rebuild) {
 			}
 		});
 		console.dir(' ')
+		return await
 	} catch (err) {
 		console.log(err.message)
 		console.log('savekeys ERROR')

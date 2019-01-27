@@ -242,7 +242,7 @@ async function objcheck(x) {
 			cpobj.type = dict[p].type
 			cpobj.name = dict[p].name
 			mykey.key = 'dict/' + dict[p].uid
-			mykey.value = cpobj
+			mykey.value = dict[p]
 			setKey(mykey)
 		}
 	});
@@ -295,4 +295,22 @@ async function rulecheck(x) {
 			setKey(mykey)
 		}
 	}
+	return await x
 }
+
+async function svccheck(x) {
+	Object.keys(x.access).forEach(function(key) {
+		var cpobj = {}
+		var dict = x.access[key]['objects-dictionary']
+		for (var p in dict) {
+			let mykey = {}
+			cpobj.type = dict[p].type
+			cpobj.name = dict[p].name
+			mykey.key = 'svc/' + dict[p].uid
+			mykey.value = cpobj
+			setKey(mykey)
+		}
+	});
+	return await x
+}
+

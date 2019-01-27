@@ -55,7 +55,7 @@ async function getdata() {
 		const myend = await myClose(mytoken)
 		console.log('Logout')
 		console.log(await myend)
-		return myobjs
+		return await myobjs
 	} catch (error) {
 		console.log(error.response.data)
 		console.log('getdata ERROR')
@@ -126,7 +126,8 @@ async function savekeys(rebuild) {
 			setKey(mykey)
 			//console.dir(Cpobj)
 		});
-		console.dir(' ')
+		console.log(' ')
+		return await 
 	} catch (err) {
 		console.log(err.message)
 		console.log('savekeys ERROR')
