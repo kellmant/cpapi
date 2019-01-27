@@ -147,9 +147,11 @@ async function dumpout(x) {
 
 async function postcmd(x) {
 	let myout = {}
+	var pubcnt = 0
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await postobj(mytoken, key, x[key][vals])
+			await sleep(500)
 		}
 		myout = await pubchange()
 	}
