@@ -127,7 +127,6 @@ async function savekeys(rebuild) {
 			//console.dir(Cpobj)
 		});
 		console.log(' ')
-		return await 
 	} catch (err) {
 		console.log(err.message)
 		console.log('savekeys ERROR')

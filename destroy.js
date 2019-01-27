@@ -106,6 +106,7 @@ async function postcmd(x) {
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await delobj(mytoken, key, x[key][vals])
+			await sleep(500)
 		}
 		mypubsess = await pubchange()
 	}
