@@ -36,7 +36,6 @@ startsession()
 .then(gettype)
 .then(proctype)
 .then(postcmd)
-.then(console.log)
 .then(endsession)
 .then(console.log)
 
@@ -150,7 +149,7 @@ async function postcmd(x) {
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await postobj(mytoken, key, x[key][vals])
-			await sleep(500)
+			await sleep(650)
 		}
 		myout = await pubchange()
 	}

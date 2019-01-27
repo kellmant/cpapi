@@ -38,7 +38,6 @@ startsession()
 .then(gettype)
 .then(proctype)
 .then(postcmd)
-.then(console.log)
 .then(endsession)
 .then(console.log)
 
@@ -79,7 +78,7 @@ async function gettype() {
 }
 
 async function proctype (inkey) {
-	for (var key in inkey) {
+	for (var key in inkey.reverse()) {
 		let a = inkey[key].key
 		let b = a.split('/')
 		mycmd = 'delete-' + b[2]
