@@ -39,7 +39,6 @@ startsession()
 .then(proctype)
 .then(postcmd)
 .then(endsession)
-.then(console.log)
 
 async function startsession() {
 	try {
@@ -74,6 +73,7 @@ function sleep(ms) {
 
 async function gettype() {
 	let showtype = await etcd.getSync('obj')
+	console.log(await showtype.body.node.nodes)
 	return await showtype.body.node.nodes
 }
 
@@ -82,6 +82,7 @@ async function proctype (inkey) {
 		let a = inkey[key].key
 		let b = a.split('/')
 		mycmd = 'delete-' + b[2]
+		console.log(mycmd)
 		mytypes[mycmd] = await needkeys(a)
 	}
 	return await mytypes
@@ -101,25 +102,33 @@ async function dumpout(x) {
 }
 
 async function postcmd(x) {
-	let mypubsess = {}
+	var mypubsess = {}
+	var count = 0
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await delobj(mytoken, key, x[key][vals])
-			await sleep(650)
+			await sleep(250)
+			count++
+			if (count > 64) {
+				mypubsess = await pubchange()
+				console.log(await mypubsess)
+				count = 0
+			}
 		}
 		mypubsess = await pubchange()
+		console.log(await key)
 	}
 	return await mypubsess
 }
 
 async function pubchange() {
-		let mypubrs = {}
+		let mypubres = {}
 		var myApi = new CpApi(mytoken)
 		myApi.setCmd('publish')
 		myApi.rmData()
-		myApi.print()
+		//myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(6000)
+		await sleep(4400)
 		return await mypubres
 }
 

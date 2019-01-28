@@ -37,7 +37,7 @@ startsession()
 .then(proctype)
 .then(postcmd)
 .then(endsession)
-.then(console.log)
+//.then(console.log)
 
 async function startsession() {
 	try {
@@ -108,7 +108,7 @@ async function savekeys(rebuild) {
 		});
 		console.dir(' ')
 	} catch (err) {
-		console.log(err.message)
+		//console.log(err.message)
 		console.log('savekeys ERROR')
 	} finally {
 		console.log('savekeys EXIT')
@@ -117,13 +117,15 @@ async function savekeys(rebuild) {
 
 async function gettype() {
 	let showtype = await etcd.getSync('obj')
+	console.log(await showtype.body.node.nodes)
 	return await showtype.body.node.nodes
 }
 
 async function proctype (inkey) {
-	for (var key in inkey) {
+	for (var key in inkey.sort()) {
 		let a = inkey[key].key
 		let b = a.split('/')
+		console.log(b[2])
 		mycmd = 'add-' + b[2]
 		mytypes[mycmd] = await needkeys(a)
 	}
@@ -144,26 +146,33 @@ async function dumpout(x) {
 }
 
 async function postcmd(x) {
-	let myout = {}
+	var myout = {}
 	var pubcnt = 0
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await postobj(mytoken, key, x[key][vals])
-			await sleep(650)
+			await sleep(240)
+			pubcnt++
+			if (pubcnt > 84) {
+				myout = await pubchange()
+				console.log(await myout)
+				pubcnt = 0
+			}
 		}
 		myout = await pubchange()
+		console.log(await key)
 	}
 	return await myout
 }
 
-async function pubchange(x) {
-		let mypubrs = {}
+async function pubchange() {
+		let mypubres = {}
 		var myApi = new CpApi(mytoken)
 		myApi.setCmd('publish')
 		myApi.rmData()
-		myApi.print()
+		//myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(6000)
+		await sleep(3600)
 		return await mypubres
 }
 

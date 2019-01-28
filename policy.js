@@ -229,7 +229,7 @@ async function apicall(x) {
 			myaccess[mypol].push(await pagein(mytoken, apiget.access, x[d]))
 			console.log(await ' processing ' + d)
 		}
-		dump('last', myaccess)
+		//dump('last', myaccess)
 		return await myaccess
 }
 
