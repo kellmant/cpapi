@@ -292,14 +292,14 @@ async function rulecheck(x) {
 			cpobj.track = track
 			mykey.key = 'access/' + policy + '/' + rulenum
 			mykey.value = cpobj
-			setKey(mykey)
+			await setKey(mykey)
 		}
 	}
 	return await x
 }
 
 async function svccheck(x) {
-	Object.keys(x.access).forEach(function(key) {
+	for (var key in x.access) {
 		var cpobj = {}
 		var dict = x.access[key]['objects-dictionary']
 		for (var p in dict) {
@@ -308,9 +308,9 @@ async function svccheck(x) {
 			cpobj.name = dict[p].name
 			mykey.key = 'svc/' + dict[p].uid
 			mykey.value = cpobj
-			setKey(mykey)
+			await setKey(mykey)
 		}
-	});
+	}
 	return await x
 }
 
