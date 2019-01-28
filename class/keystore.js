@@ -69,7 +69,7 @@ module.exports = class Keystore {
 	async setKey (x, y) {
 		this.key = x
 		this.value = y
-		this.result = await keystore.update(this).catch((err) => { throw new Error(err)})
+		this.result = await keystore.update(this).catch((err) => { console.log(err.error)})
 		return await this
 	}
 

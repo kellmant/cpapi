@@ -192,7 +192,7 @@ async function needkeys(getem) {
 
 async function getuid(getem) {
 	var mydata = await etcd.getSync('dict/' + getem)
-	let mydataback = await JSON.parse(mydata.body.node.value)
+	var mydataback = JSON.parse(await mydata.body.node.value)
 	return await mydataback.name
 }
 
@@ -229,12 +229,12 @@ async function apicall(x) {
 			myaccess[mypol].push(await pagein(mytoken, apiget.access, x[d]))
 			console.log(await ' processing ' + d)
 		}
-		//dump('last', myaccess)
+		dump('last', myaccess)
 		return await myaccess
 }
 
 async function objcheck(x) {
-	Object.keys(x.access).forEach(function(key) {
+	for (var key in x.access) {
 		var cpobj = {}
 		var dict = x.access[key]['objects-dictionary']
 		for (var p in dict) {
@@ -242,10 +242,10 @@ async function objcheck(x) {
 			cpobj.type = dict[p].type
 			cpobj.name = dict[p].name
 			mykey.key = 'dict/' + dict[p].uid
-			mykey.value = dict[p]
-			setKey(mykey)
+			mykey.value = cpobj
+			await setKey(mykey)
 		}
-	});
+	}
 	return await x
 }
 
