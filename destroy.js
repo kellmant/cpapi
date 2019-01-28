@@ -105,7 +105,7 @@ async function postcmd(x) {
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await delobj(mytoken, key, x[key][vals])
-			await sleep(500)
+			await sleep(650)
 		}
 		mypubsess = await pubchange()
 	}
@@ -119,7 +119,7 @@ async function pubchange() {
 		myApi.rmData()
 		myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(5000)
+		await sleep(6000)
 		return await mypubres
 }
 
