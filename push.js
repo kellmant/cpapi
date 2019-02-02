@@ -34,6 +34,7 @@ const netroot = 'obj/'
 
 startsession()
 .then(gettype)
+.then(setit)
 .then(proctype)
 .then(postcmd)
 .then(endsession)
@@ -121,13 +122,24 @@ async function gettype() {
 	return await showtype.body.node.nodes
 }
 
+async function setit(x) {
+	var thearr = []
+	for (var key in x) {
+		if (x[key].dir) {
+			let a = x[key].key
+			let b = a.split('/')
+			thearr = thearr.concat(b[2])
+		}
+	}
+	return await thearr.sort()
+}
+
+
 async function proctype (inkey) {
-	for (var key in inkey.sort()) {
-		let a = inkey[key].key
-		let b = a.split('/')
-		console.log(b[2])
-		mycmd = 'add-' + b[2]
-		mytypes[mycmd] = await needkeys(a)
+	for (var key in inkey.reverse()) {
+		mycmd = 'add-' + inkey[key]
+		console.log(await mycmd)
+		mytypes[mycmd] = await needkeys('obj/' + inkey[key])
 	}
 	return await mytypes
 }
