@@ -36,6 +36,7 @@ const netroot = 'obj/'
 
 startsession()
 .then(gettype)
+.then(setit)
 .then(proctype)
 .then(postcmd)
 .then(endsession)
@@ -77,13 +78,25 @@ async function gettype() {
 	return await showtype.body.node.nodes
 }
 
+async function setit(x) {
+	var thearr = []
+	for (var key in x) {
+		if (x[key].dir) {
+			let a = x[key].key
+			let b = a.split('/')
+			thearr = thearr.concat(b[2])
+		}
+	}
+	return await thearr.sort()
+}
+
 async function proctype (inkey) {
-	for (var key in inkey.reverse()) {
-		let a = inkey[key].key
-		let b = a.split('/')
-		mycmd = 'delete-' + b[2]
-		console.log(mycmd)
-		mytypes[mycmd] = await needkeys(a)
+	for (var key in inkey) {
+		let a = inkey[key]
+		mycmd = 'delete-' + a
+		console.log(await mycmd)
+		console.log(await a)
+		mytypes[mycmd] = await needkeys('obj/' + a)
 	}
 	return await mytypes
 }
@@ -107,9 +120,9 @@ async function postcmd(x) {
 	for (var key in x) {
 		for (var vals in x[key]) {
 			await delobj(mytoken, key, x[key][vals])
-			await sleep(250)
+			await sleep(350)
 			count++
-			if (count > 64) {
+			if (count > 51) {
 				mypubsess = await pubchange()
 				console.log(await mypubsess)
 				count = 0
