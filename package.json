@@ -29,7 +29,9 @@
     "body-parser": "^1.18.3",
     "datalib": "^1.9.1",
     "express": "^4.16.4",
+    "json-groupby": "^1.1.0",
     "namor": "^1.1.1",
+    "nest-by": "^1.0.0",
     "node-etcd": "^7.0.0"
   }
 }
