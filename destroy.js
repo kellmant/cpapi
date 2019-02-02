@@ -51,7 +51,7 @@ async function startsession() {
 		console.log(error.response.data)
 		console.log('startsession ERROR')
 	} finally {
-		console.log('startsession EXIT')
+		console.log('startsession')
 	}
 }
 
