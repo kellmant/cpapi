@@ -119,10 +119,11 @@ async function postcmd(x) {
 	var count = 0
 	for (var key in x) {
 		for (var vals in x[key]) {
+			console.log(await key + ' ' + x[key][vals].name)
 			await delobj(mytoken, key, x[key][vals])
-			await sleep(350)
+			await sleep(260)
 			count++
-			if (count > 51) {
+			if (count > 63) {
 				mypubsess = await pubchange()
 				console.log(await mypubsess)
 				count = 0
