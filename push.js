@@ -118,7 +118,7 @@ async function savekeys(rebuild) {
 
 async function gettype() {
 	let showtype = await etcd.getSync('obj')
-	console.log(await showtype.body.node.nodes)
+	//console.log(await showtype.body.node.nodes)
 	return await showtype.body.node.nodes
 }
 
@@ -138,7 +138,7 @@ async function setit(x) {
 async function proctype (inkey) {
 	for (var key in inkey.reverse()) {
 		mycmd = 'add-' + inkey[key]
-		console.log(await mycmd)
+		//console.log(await mycmd)
 		mytypes[mycmd] = await needkeys('obj/' + inkey[key])
 	}
 	return await mytypes
@@ -161,19 +161,20 @@ async function postcmd(x) {
 	var myout = {}
 	var pubcnt = 0
 	for (var key in x) {
+		console.log(await key)
 		for (var vals in x[key]) {
-			console.log(await key + ' ' + await x[key][vals].name)
+			//console.log(await key + ' ' + await x[key][vals].name)
 			await postobj(mytoken, key, x[key][vals])
 			await sleep(250)
 			pubcnt++
 			if (pubcnt > 49) {
 				myout = await pubchange()
-				console.log(await myout)
+				console.log('publish ' + await JSON.stringify(myout))
 				pubcnt = 0
 			}
 		}
 		myout = await pubchange()
-		console.log(await myout)
+		console.log('completed ' + await key + ' ' + await JSON.stringify(myout))
 	}
 	return await myout
 }

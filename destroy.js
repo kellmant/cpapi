@@ -74,7 +74,7 @@ function sleep(ms) {
 
 async function gettype() {
 	let showtype = await etcd.getSync('obj')
-	console.log(await showtype.body.node.nodes)
+	//console.log(await showtype.body.node.nodes)
 	return await showtype.body.node.nodes
 }
 
@@ -94,8 +94,6 @@ async function proctype (inkey) {
 	for (var key in inkey) {
 		let a = inkey[key]
 		mycmd = 'delete-' + a
-		console.log(await mycmd)
-		console.log(await a)
 		mytypes[mycmd] = await needkeys('obj/' + a)
 	}
 	return await mytypes
@@ -118,19 +116,20 @@ async function postcmd(x) {
 	var mypubsess = {}
 	var count = 0
 	for (var key in x) {
+		console.log(await key)
 		for (var vals in x[key]) {
-			console.log(await key + ' ' + await x[key][vals].name)
+			//console.log(await key + ' ' + await x[key][vals].name)
 			await delobj(mytoken, key, x[key][vals])
 			await sleep(260)
 			count++
 			if (count > 49) {
 				mypubsess = await pubchange()
-				console.log(await mypubsess)
+				console.log('publish ' + await JSON.stringify(mypubsess))
 				count = 0
 			}
 		}
 		mypubsess = await pubchange()
-		console.log(await mypubsess)
+		console.log('completed ' + await key + ' ' + await JSON.stringify(mypubsess))
 	}
 	return await mypubsess
 }
