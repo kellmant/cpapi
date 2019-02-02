@@ -34,8 +34,8 @@ module.exports = async (cpSession, mycmd, mydata) => {
 				console.log('From ' + myarr.from + ' to ' + myarr.to + ' of ' + myarr.total + ' indexed')
 				inoffset = Number(myarr.to)
 				myApi.setCnt(inoffset, pglimit)
-				myobj.push(myarr)
 				myarr = await myApi.apiPost()
+				myobj.push(myarr)
 			}
 			return await myobj
 		} else {
