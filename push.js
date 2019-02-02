@@ -162,18 +162,18 @@ async function postcmd(x) {
 	var pubcnt = 0
 	for (var key in x) {
 		for (var vals in x[key]) {
-			console.log(await key + ' ' + x[key][vals].name)
+			console.log(await key + ' ' + await x[key][vals].name)
 			await postobj(mytoken, key, x[key][vals])
 			await sleep(250)
 			pubcnt++
-			if (pubcnt > 63) {
+			if (pubcnt > 49) {
 				myout = await pubchange()
 				console.log(await myout)
 				pubcnt = 0
 			}
 		}
 		myout = await pubchange()
-		console.log(await key)
+		console.log(await myout)
 	}
 	return await myout
 }

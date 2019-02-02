@@ -119,18 +119,18 @@ async function postcmd(x) {
 	var count = 0
 	for (var key in x) {
 		for (var vals in x[key]) {
-			console.log(await key + ' ' + x[key][vals].name)
+			console.log(await key + ' ' + await x[key][vals].name)
 			await delobj(mytoken, key, x[key][vals])
 			await sleep(260)
 			count++
-			if (count > 63) {
+			if (count > 49) {
 				mypubsess = await pubchange()
 				console.log(await mypubsess)
 				count = 0
 			}
 		}
 		mypubsess = await pubchange()
-		console.log(await key)
+		console.log(await mypubsess)
 	}
 	return await mypubsess
 }
@@ -142,7 +142,7 @@ async function pubchange() {
 		myApi.rmData()
 		//myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(4400)
+		await sleep(4200)
 		return await mypubres
 }
 
