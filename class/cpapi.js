@@ -120,7 +120,11 @@ module.exports = class Cpapi {
 	}
 
 	delObj (x) {
-		this.data.name = x.name
+		if (x.uid) {
+			this.data.uid = x.uid
+		} else {
+			this.data.name = x.name
+		}
 		return this
 	}
 
