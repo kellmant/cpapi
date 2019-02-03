@@ -33,7 +33,7 @@ var dl = require('datalib');
 const Cpclass = require('./class/cpobj')
 const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
-var netroot = 'policy/'
+var netroot = 'pkg/'
 
 
 apidata(apishow.pkgs)
@@ -57,7 +57,7 @@ async function apidata(cmd) {
 		console.log(' Starting session: ' + await mytoken.uid)
 		console.log('running api call: ' + cmd + ' . . . ')
 		myobjs[cmd] = await pagein(mytoken, cmd)
-		dump('last', myobjs)
+		//dump('last', myobjs)
 		console.log('api session ' + mytoken.uid + ' COMPLETED object extraction ')
 		const myend = await myClose(mytoken)
 		console.log('Logout')
@@ -116,7 +116,7 @@ async function saveaccess(pkg) {
 					delete Cpobj.type
 					delete Cpobj.uid
 					delete Cpobj.color
-					Cpobj['show-hits'] = true
+					//Cpobj['show-hits'] = true
 				mykey.key = netroot + netdir 
 				mykey.value = Cpobj
 				setKey(mykey)
@@ -229,7 +229,7 @@ async function apicall(x) {
 			myaccess[mypol].push(await pagein(mytoken, apiget.access, x[d]))
 			console.log(await ' processing ' + d)
 		}
-		dump('last', myaccess)
+		//dump('last', myaccess)
 		return await myaccess
 }
 
@@ -281,7 +281,7 @@ async function rulecheck(x) {
 			content.push(await getuid(rules[p].content[i]))
 			}
 			cpobj.layer = layer
-			cpobj.position = rulenum
+			cpobj.position = 'bottom'
 			cpobj.name = rules[p].name
 			cpobj.source = source
 			cpobj.destination = destination

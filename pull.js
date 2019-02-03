@@ -3,9 +3,14 @@ const myAuth = require('./bin/auth')
 const pagein = require('./fun/page')
 const grabin = require('./fun/grab')
 //
+// load keystore tools to use etcd as a var cache
+var Etcd = require('node-etcd');
+const myKeystore = process.env.ETCDCTL_ENDPOINTS
+var etcd = new Etcd(myKeystore)
 const apishow = {}
 apishow.grps = 'show-groups'
 apishow.pkgs = 'show-packages'
+apishow.tags = 'show-tags'
 apishow.gws = 'show-gateways-and-servers'
 apishow.networks = 'show-networks'
 apishow.ranges = 'show-address-ranges'
@@ -32,6 +37,8 @@ getdata()
 
 async function getdata() {
 	try {
+		//console.log('cleaning last session ' + netroot)
+		//await etcd.delSync(netroot)
 		console.log(' logging into api')
 		let mycred = await myCredentials()
 		const mytoken = await myAuth(mycred)
@@ -44,9 +51,10 @@ async function getdata() {
 		myobjs.group = await pagein(mytoken, apishow.grps)
 		console.log('Collecting network objects . . . ')
 		myobjs.network = await pagein(mytoken, apishow.networks)
-		//myobjs.range = await pagein(mytoken, apishow.ranges)
 		console.log('Collecting host objects . . . ')
 		myobjs.host = await pagein(mytoken, apishow.hosts)
+		console.log('Collecting tag info . . . ')
+		myobjs.tags = await pagein(mytoken, apishow.tags)
 		var lastpub = await grabin(mytoken, apiget.pub)
 		let tstamp = await lastpub['publish-time'].posix
 		myobjs.change[tstamp] = await lastpub
@@ -60,7 +68,7 @@ async function getdata() {
 		console.log(error.response.data)
 		console.log('getdata ERROR')
 	} finally {
-		console.log('getdata EXIT')
+		console.log('getdata complete')
 	}
 }
 
@@ -73,6 +81,7 @@ async function savekeys(rebuild) {
 		let netops = rebuild.network.objects
 		let hostops = rebuild.host.objects
 		let grpops = rebuild.group.objects
+		let tagops = rebuild.tags.objects
 		Object.keys(netops).forEach(function(key) {
 			const Cpobj = new Cpclass(netops[key])
 			let mytype = Cpobj.type
@@ -90,16 +99,24 @@ async function savekeys(rebuild) {
 		});
 		Object.keys(hostops).forEach(function(key) {
 			const Cpobj = new Cpclass(hostops[key])
+			var arrmembers = []
 			let mytype = Cpobj.type
 			let myuid = Cpobj.uid
+			let mytags = Cpobj.tagem(hostops[key])
+			for (var g in mytags.tags) {
+				for (var h in mytags.tags[g]) {
+				arrmembers.push(mytags.tags[g][h].name)
+				//console.log(mytags.tags[g][h])
+				}
+			}
+			Cpobj.tagArr(arrmembers)
 			let myhost = Cpobj.host(hostops[key])
 			let mykey = {}
 			let hostip = myhost['ipv4-address']
 			if (myhost['ipv4-address']) {
-			//let hostdir = hostip.replace(/\./g, '/')
 			let hostdir = mytype + '/' + myuid
 			mykey.key = netroot + hostdir 
-			mykey.value = myhost
+			mykey.value = Cpobj
 			setKey(mykey)
 			}
 		});
@@ -125,6 +142,17 @@ async function savekeys(rebuild) {
 			mykey.value = Cpobj
 			setKey(mykey)
 			//console.dir(Cpobj)
+		});
+		Object.keys(tagops).forEach(function(key) {
+			const Cpobj = new Cpclass(tagops[key])
+			let mytype = Cpobj.type
+			let myuid = Cpobj.uid
+			let mytag = Cpobj.tag(tagops[key])
+			let mykey = {}
+			let tagdir = mytype + '/' + myuid
+			mykey.key = tagdir 
+			mykey.value = mytag
+			setKey(mykey)
 		});
 		console.log(' ')
 	} catch (err) {

@@ -73,7 +73,7 @@ function sleep(ms) {
 }
 
 async function gettype() {
-	let showtype = await etcd.getSync('obj')
+	let showtype = await etcd.getSync(netroot)
 	//console.log(await showtype.body.node.nodes)
 	return await showtype.body.node.nodes
 }
@@ -94,7 +94,7 @@ async function proctype (inkey) {
 	for (var key in inkey) {
 		let a = inkey[key]
 		mycmd = 'delete-' + a
-		mytypes[mycmd] = await needkeys('obj/' + a)
+		mytypes[mycmd] = await needkeys(netroot + a)
 	}
 	return await mytypes
 }
@@ -122,7 +122,7 @@ async function postcmd(x) {
 			await delobj(mytoken, key, x[key][vals])
 			await sleep(260)
 			count++
-			if (count > 49) {
+			if (count > 39) {
 				mypubsess = await pubchange()
 				console.log('publish ' + await JSON.stringify(mypubsess))
 				count = 0
@@ -141,7 +141,7 @@ async function pubchange() {
 		myApi.rmData()
 		//myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(4200)
+		await sleep(5600)
 		return await mypubres
 }
 
