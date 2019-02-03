@@ -167,7 +167,7 @@ async function postcmd(x) {
 			await postobj(mytoken, key, x[key][vals])
 			await sleep(250)
 			pubcnt++
-			if (pubcnt > 49) {
+			if (pubcnt > 39) {
 				myout = await pubchange()
 				console.log('publish ' + await JSON.stringify(myout))
 				pubcnt = 0
@@ -186,7 +186,7 @@ async function pubchange() {
 		myApi.rmData()
 		//myApi.print()
 		mypubres = await myApi.apiPost()
-		await sleep(3600)
+		await sleep(4600)
 		return await mypubres
 }
 
