@@ -28,13 +28,10 @@ module.exports = class CPobj {
 		}
 	}
 
-	tag (x) {
-		if (!this.tags) {
-			this.tags = {'add': x}
-		} else {
-		//this.tags.push(x)
-		this.tags += {x}
-		}
+	tag () {
+		this['ignore-warnings'] = true
+		delete this.type
+		delete this.uid
 		return this
 	}
 
@@ -81,6 +78,16 @@ module.exports = class CPobj {
 
 	groupArr (x) {
 		this.members = x
+		return this
+	}
+
+	tagem (x) {
+		this.tags = [x.tags]
+		return this
+	}
+
+	tagArr (x) {
+		this.tags = x
 		return this
 	}
 
