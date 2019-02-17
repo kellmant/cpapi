@@ -36,7 +36,6 @@ const Cpclass = require('./class/cpobj')
 const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'stage/'
-const mydat = require('./backup.json')
 
 getallobjs()
 .then(indexobjs)
