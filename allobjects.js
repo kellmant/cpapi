@@ -17,15 +17,15 @@ var nestBy = require('nest-by')
 var myobjs = []
 var sorted = []
 var allobjs = {}
-var localdat = require('./backup.json')
+//var localdat = require('./backup.json')
 
-//runtime()
-//.then(sortkeys)
+runtime()
+.then(sortkeys)
 //.then(console.dir)
-sortkeys(localdat)
-.then(keyarr)
+//sortkeys(localdat)
+//.then(keyarr)
 //.then(setarr)
-.then(keytype)
+//.then(keytype)
 //.then(console.dir)
 
 async function runtime () {
@@ -33,12 +33,16 @@ async function runtime () {
 		let mycred = await myCredentials()
 		const mytoken = await myAuth(mycred)
 		console.dir(await mytoken)
-		let inobjs = await pagein(mytoken, dataobj.mycmd)
+		myobjs = myobjs.concat(await pagein(mytoken, dataobj.mycmd))
 		//console.log(await typeof myobjs)
 		const myend = await myClose(mytoken)
 		console.log(await myend)
-		dump('backup', await inobjs)
-		return await inobjs
+		//var inobj = []
+		//for (var x in allobjs) {
+		//	inobj = inobj.concat(allobjs[x].objects)
+		//}
+		dump('backup', await myobjs)
+		return await myobjs
 	} catch (error) {
 		console.log(error.response)
 		console.log('PROGRAM ERROR')
@@ -51,7 +55,7 @@ async function sortkeys(x) {
 	try {
 		for (var key in x) {
 			let mykobj = x[key].objects
-			sorted = sorted.concat(groupBy(mykobj, ['type']))
+			sorted = sorted.concat(nestBy(mykobj, 'type'))
 
 		}
 		//let myshit = keyarr(sorted)
