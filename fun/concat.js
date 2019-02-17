@@ -29,9 +29,9 @@ module.exports = async (cpSession, mycmd, mydata) => {
 		myApi.setDetail(detail)
 		myApi.setCmd(mycmd)
 		myarr = await myApi.apiPost()
+		myobj = myobj.concat(myarr)
 		if (myarr.total > myarr.to) {
 			//myobj.push(myarr)
-			myobj = myobj.concat(myarr)
 			while (myarr.total >= inoffset) {
 				console.log('From ' + myarr.from + ' to ' + myarr.to + ' of ' + myarr.total + ' indexed')
 				inoffset = Number(myarr.to)
@@ -42,7 +42,7 @@ module.exports = async (cpSession, mycmd, mydata) => {
 			}
 			return await myobj
 		} else {
-		return await myarr
+		return await myobj
 		}
 	} catch (error) {
 		//console.log(error.response.data)
