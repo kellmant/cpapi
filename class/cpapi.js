@@ -1,20 +1,21 @@
 "use strict";
-//
-// ID:v1.2 102218
-// class/cpapi.js
-//
-//Class Constructor
-// ES6 style
-//
-// this is your class method for constructing objects
-// be sure to export it, as well as call the functions it needs
-// to return your values to the object
-// will call the script of the same name in fun/
-// for functional transport of REST calls
-//
-// axios API constructor for Check Point
-// see fun/cpapi.js for axios function
-//
+/**
+ * ID:v1.2 102218
+ * class/cpapi.js
+ * Class Constructor
+ * ES6 style
+ *
+ * this is your class method for constructing objects
+ * be sure to export it, as well as call the functions it needs
+ * to return your values to the object
+ * will call the script of the same name in fun/
+ * for functional transport of REST calls
+ *
+ * axios API constructor for Check Point
+ * see fun/cpapi.js for axios function
+*/
+
+
 const path = require('path');
 const scriptname = path.basename(__filename);
 const funcall = `../fun/${scriptname}`
