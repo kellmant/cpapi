@@ -27,6 +27,7 @@ const myClose = require('./bin/close')
 var myobjs = []
 var allobjs = []
 var alltypes = ['host', 'network', 'group', 'address-range', 'service-tcp', 'service-udp', 'service-other', 'service-dce-rpc', 'service-rpc']
+var doops = 'add-'
 //
 var dl = require('datalib');
 const Cpclass = require('./class/cpobj')
@@ -49,7 +50,7 @@ getallobjs()
 
 /** 
  * get api calls from staging and
- * dump to tmp.json file for later processing
+ * dump to <doops>-staged.json file for later processing
  */
 gettype()
 .then(setit)
@@ -57,6 +58,13 @@ gettype()
 .then(dumpnow)
 .then(console.log)
 
+/**
+ * post from local json data dump
+ *
+const mydatfile = require('./add-staged.json')
+postcmd(mydatfile)
+.then(console.log)
+ */
 
 /**
  * @function getallobjs
@@ -215,7 +223,7 @@ async function setit(x) {
 async function proctype (inkey) {
 	for (var key in inkey.reverse()) {
 		let b = inkey[key].split('/')
-		mycmd = 'set-' + b[3]
+		mycmd = doops + b[3]
 		//console.log(await mycmd)
 		mytypes[mycmd] = await needkeys(inkey[key])
 	}
@@ -237,11 +245,13 @@ async function dumpout(x) {
 }
 
 async function dumpnow(x) {
-	await dump('tmp', x)
+	await dump(doops + 'staged', x)
 	return x
 }
 
 async function postcmd (x) {
+	let mycred = await myCredentials()
+	const mytoken = await myAuth(mycred)
 	var myout = {}
 	var pubcnt = 0
 	for (var key in x) {
@@ -260,6 +270,7 @@ async function postcmd (x) {
 		myout = await pubchange()
 		console.log('completed ' + await key + ' ' + await JSON.stringify(myout))
 	}
+	const myend = await myClose(mytoken)
 	return await myout
 }
 
