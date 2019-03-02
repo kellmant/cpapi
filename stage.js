@@ -26,7 +26,7 @@ const dump = require('./fun/writefile')
 const myClose = require('./bin/close')
 var myobjs = []
 var allobjs = []
-var alltypes = ['host', 'network', 'group', 'address-range']
+var alltypes = ['host', 'network', 'group', 'address-range', 'service-tcp', 'service-udp', 'service-other', 'service-dce-rpc', 'service-rpc']
 //
 var dl = require('datalib');
 const Cpclass = require('./class/cpobj')
@@ -34,11 +34,29 @@ const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'stage/'
 
+/**
+ * get objects from the cpapi host
 getallobjs()
 .then(indexobjs)
 .then(arrobjs)
 .then(dumpout)
 .then(saveobjs)
+*/
+
+// read local dump file (for faster testing)
+//const mydatfile = require('./dumpit.json')
+//saveobjs(mydatfile)
+
+/** 
+ * get api calls from staging and
+ * dump to tmp.json file for later processing
+ */
+gettype()
+.then(setit)
+.then(proctype)
+.then(dumpnow)
+.then(console.log)
+
 
 /**
  * @function getallobjs
@@ -140,7 +158,12 @@ async function saveobjs (rebuild) {
 				delete Cpobj.tags
 			}
 			if (alltypes.indexOf(mytype) >= 0) {
-				Cpobj[mytype](rebuild[key])
+				let mysvctype = mytype.split('-')
+				if (mysvctype[0] === 'service') {
+					Cpobj[mysvctype[0]](rebuild[key])
+				} else {
+					Cpobj[mytype](rebuild[key])
+				}
 				if (mytype === 'group') {
 					for (var g in Cpobj.members) {
 						for (var h in Cpobj.members[g]) {
@@ -151,10 +174,14 @@ async function saveobjs (rebuild) {
 				}
 				delete Cpobj.uid
 				delete Cpobj.type
-				mykey.key = netroot + mymoder + '/api/' + mytype + '/' + myuid
+				if (mymoder === 'System') {
+					mykey.key = netroot + 'cfg/' + mymoder + '/' + mytype + '/' + myuid
+				} else {
+					mykey.key = netroot + 'api/' + mytype + '/' + myuid
+				}
 				mykey.value = Cpobj
 			} else {
-				mykey.key = netroot + mymoder + '/cfg/' + mytype + '/' + myuid
+				mykey.key = netroot + 'cfg/' + mymoder + '/' + mytype + '/' + myuid
 				mykey.value = rebuild[key]
 			}
 			setKey(mykey)
@@ -168,7 +195,7 @@ async function saveobjs (rebuild) {
 }
 
 async function gettype() {
-	let showtype = await etcd.getSync(netroot)
+	let showtype = await etcd.getSync(netroot + 'api/')
 	//console.log(await showtype.body.node.nodes)
 	return await showtype.body.node.nodes
 }
@@ -178,8 +205,7 @@ async function setit(x) {
 	for (var key in x) {
 		if (x[key].dir) {
 			let a = x[key].key
-			let b = a.split('/')
-			thearr = thearr.concat(b[2])
+			thearr = thearr.concat(a)
 		}
 	}
 	return await thearr.sort()
@@ -188,9 +214,10 @@ async function setit(x) {
 
 async function proctype (inkey) {
 	for (var key in inkey.reverse()) {
-		mycmd = 'set-' + inkey[key]
+		let b = inkey[key].split('/')
+		mycmd = 'set-' + b[3]
 		//console.log(await mycmd)
-		mytypes[mycmd] = await needkeys(netroot + inkey[key])
+		mytypes[mycmd] = await needkeys(inkey[key])
 	}
 	return await mytypes
 }
@@ -206,6 +233,11 @@ async function needkeys(getem) {
 
 async function dumpout(x) {
 	await dump('dumpit', x)
+	return x
+}
+
+async function dumpnow(x) {
+	await dump('tmp', x)
 	return x
 }
 
