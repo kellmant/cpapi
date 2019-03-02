@@ -1,6 +1,3 @@
-//stage.js for staging changes through the api
-//
-// load keystore tools to use etcd as a var cache
 var Etcd = require('node-etcd');
 const myKeystore = process.env.ETCDCTL_ENDPOINTS
 var etcd = new Etcd(myKeystore)
@@ -29,7 +26,7 @@ const dump = require('./fun/writefile')
 const myClose = require('./bin/close')
 var myobjs = []
 var allobjs = []
-var alltypes = ['host', 'network', 'group']
+var alltypes = ['host', 'network', 'group', 'address-range']
 //
 var dl = require('datalib');
 const Cpclass = require('./class/cpobj')
@@ -40,8 +37,20 @@ const netroot = 'stage/'
 getallobjs()
 .then(indexobjs)
 .then(arrobjs)
+.then(dumpout)
 .then(saveobjs)
 
+/**
+ * @function getallobjs
+ *
+ * Get all objects from the Check Point API
+ * 
+ * @requires bin/credentials
+ * @requires bin/auth
+ * @requires bin/close
+ * @requires fun/concat
+ *
+ */
 async function getallobjs () {
 	try {
 		let getobjs = []
@@ -64,6 +73,15 @@ function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * @function indexobj
+ *
+ * collect and index returned objects
+ *
+ * @param from getobjs return
+ *
+ */
+
 async function indexobjs (x) {
 	var myCpdb = Object.keys(x)
 	for (var t in myCpdb) {
@@ -72,21 +90,44 @@ async function indexobjs (x) {
 	return await myobjs
 }
 
+/**
+ * @function arrobjs
+ *
+ * create an array of all objects at the top level
+ *
+ * @parm myobjs from indexobj
+ *
+ */
+
 async function arrobjs (x) {
 	for (var t in x) {
 		allobjs = allobjs.concat(x[t])
 	}
 	return await allobjs
 }
+
+/**
+ * @function saveobjs
+ *
+ * save the array of objects to keystore
+ *
+ */
+ 
 async function saveobjs (rebuild) {
 	try {
 		Object.keys(rebuild).forEach(function(key) {
 			const Cpobj = new Cpclass(rebuild[key])
 			var mytype = Cpobj.type
+			if (mytype === '') {
+				mytype = 'nulltype'
+			}
 			let myuid = Cpobj.uid
 			let myname = Cpobj.name
+			let myowner = rebuild[key]['meta-info'].creator
+			let mymoder = rebuild[key]['meta-info']['last-modifier']
 			var arrmembers = []
 			var garrmembers = []
+			var mykey = {}
 			var mytags = Cpobj.tagem(rebuild[key])
 			for (var g in mytags.tags) {
 				for (var h in mytags.tags[g]) {
@@ -108,14 +149,15 @@ async function saveobjs (rebuild) {
 					}
 					Cpobj.groupArr(garrmembers)
 				}
-			let mykey = {}
-			let netdir = mytype + '/' + myuid
-			delete Cpobj.uid
-			delete Cpobj.type
-			mykey.key = netroot + netdir 
-			mykey.value = Cpobj
-			setKey(mykey)
+				delete Cpobj.uid
+				delete Cpobj.type
+				mykey.key = netroot + mymoder + '/api/' + mytype + '/' + myuid
+				mykey.value = Cpobj
+			} else {
+				mykey.key = netroot + mymoder + '/cfg/' + mytype + '/' + myuid
+				mykey.value = rebuild[key]
 			}
+			setKey(mykey)
 		});
 		console.dir(' ')
 	} catch (err) {
@@ -163,7 +205,7 @@ async function needkeys(getem) {
 }
 
 async function dumpout(x) {
-	await dump('output', x)
+	await dump('dumpit', x)
 	return x
 }
 
