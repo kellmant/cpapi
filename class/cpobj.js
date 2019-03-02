@@ -122,5 +122,55 @@ module.exports = class CPobj {
 		return this
 	}
 
+	service (x) {
+		if (x.port) {
+			this.port = x.port
+		}
+		if (x['source-port']) {
+			this['source-port'] = x['source-port']
+		}
+		if (x['ip-protocol']) {
+			this['ip-protocol'] = x['ip-protocol']
+		}
+		if (x['keep-connections-open-after-policy-installation']) {
+			this['keep-connections-open-after-policy-installation'] = x['keep-connections-open-after-policy-installation']
+		}
+		if (x['aggressive-aging']) {
+			this['aggressive-aging'] = x['aggressive-aging']
+		}
+		if (x['match-by-protocol-signature']) {
+			this['match-by-protocol-signature'] = x['match-by-protocol-signature']
+		}
+		if (x['match-for-any']) {
+			this['match-for-any'] = x['match-for-any']
+		}
+		if (x['override-default-settings']) {
+			this['override-default-settings'] = x['override-default-settings']
+		}
+		if (x.protocol) {
+			this.protocol = x.protocol
+		}
+		if (x['session-timeout']) {
+			this['session-timeout'] = x['session-timeout']
+		}
+		if (x['sync-connections-on-cluster']) {
+			this['sync-connections-on-cluster'] = x['sync-connections-on-cluster']
+		}
+		if (x['use-default-session-timeout']) {
+			this['use-default-session-timeout'] = x['use-default-session-timeout'] 
+		}
+		if (x['interface-uuid']) {
+			this['interface-uuid'] = x['interface-uuid']
+		}
+		if (x['program-number']) {
+			this['program-number'] = x['program-number']
+		}
+		if (x['accept-replies']) {
+			this['accept-replies'] = x['accept-replies']
+		}
+		this['ignore-warnings'] = true
+		return this
+	}
+
 
 }
