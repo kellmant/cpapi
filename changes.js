@@ -31,10 +31,12 @@ const apiget = {}
 apiget.pub = 'show-last-published-session'
 apiget.access = 'show-access-rulebase'
 apiget.pkg = 'show-package'
+var dateobj = new Date(); 
+var uptodate = dateobj.toISOString().slice(0, 19)
 var mychange = {}
 mychange.cmd = 'show-changes'
 mychange.data = { 'from-date': '2019-04-13',
-		  'to-date': '2019-04-15' }
+		  'to-date': uptodate }
 var mytask = {}
 mytask.cmd = 'show-task'
 mytask.data = {}
