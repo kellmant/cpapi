@@ -35,7 +35,7 @@ var dateobj = new Date();
 var uptodate = dateobj.toISOString().slice(0, 19)
 var mychange = {}
 mychange.cmd = 'show-changes'
-mychange.data = { 'from-date': '2019-04-13',
+mychange.data = { 'from-date': '2019-04-12',
 		  'to-date': uptodate }
 var mytask = {}
 mytask.cmd = 'show-task'
@@ -59,7 +59,6 @@ startsession()
 .then(lastpush)
 .then(reqdata)
 .then(showtask)
-.then(console.dir)
 .then(endsession)
 
 async function startsession() {
@@ -97,8 +96,18 @@ function sleep(ms) {
 async function lastpush () {
 	let objarr = []
 	objarr = objarr.concat(await pagearr(mytoken, mypush.cmd))
-	await dump('mylastpush', objarr)
-	return await objarr
+	//console.dir(await objarr[0].objects)
+	let secgw = await objarr[0].objects
+	//console.dir(await objarr[0].objects.policy['access-policy-installation-date']['iso-8601'])
+	for (var x in secgw) {
+		if (secgw[x].policy['cluster-members-access-policy-revision']) {
+			await dump('mylastpush', secgw[x].policy)
+			console.dir(secgw[x].policy['access-policy-installation-date']['iso-8601'])
+			let lastinstall = secgw[x].policy['access-policy-installation-date']['iso-8601']
+			mychange.data = { 'from-date': lastinstall.slice(0, 16), 'to-date': uptodate }
+		}
+	}
+	return await mychange.data
 }
 
 async function reqdata () {
@@ -110,15 +119,19 @@ async function reqdata () {
 
 async function showtask () {
 	let checkit = {}
+	console.log(' ')
 	do {
 		checkit = await grabin(mytoken, mytask)
-		console.log('STATUS IS: ' + checkit.tasks[0].status)
+		//process.stdout.write('\033c');
+		process.stdout.write(checkit.tasks[0].status + ' ' + checkit.tasks[0]['progress-percentage'] + '% COMPLETE ' + checkit.tasks[0]['progress-description'] + '                    \r')
 		await sleep(1000)
 	}
 	while (checkit.tasks[0].status !== 'succeeded') 
+	console.log(checkit.tasks[0].status + ' ' + checkit.tasks[0]['progress-percentage'] + '% COMPLETE ' + checkit.tasks[0]['progress-description'])
 	await sleep(2000)
 	change = await grabin(mytoken, mytask)
 	await dump('mychange', change)
+	console.dir(change.tasks[0])
 	return await change
 }
 
