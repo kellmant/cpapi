@@ -107,7 +107,14 @@ async function reqdata () {
 }
 
 async function showtask () {
-	await sleep(5000)
+	let checkit = {}
+	do {
+		checkit = await grabin(mytoken, mytask)
+		console.log('STATUS IS: ' + checkit.tasks[0].status)
+		await sleep(1000)
+	}
+	while (checkit.tasks[0].status !== 'succeeded') 
+	await sleep(2000)
 	change = await grabin(mytoken, mytask)
 	await dump('mychange', change)
 	return await change
