@@ -60,6 +60,7 @@ startsession()
 .then(reqdata)
 .then(showtask)
 .then(endsession)
+.catch(endsession)
 
 async function startsession() {
 	try {
