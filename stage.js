@@ -35,36 +35,51 @@ const CpApi = require('./class/cpapi')
 const setKey = require('./fun/writekey')
 const netroot = 'stage/'
 
-/**
- * get objects from the cpapi host
+const groupBy = (items, key) => items.reduce(
+	(result, item) => ({
+	...result,
+	[item[key]]: [
+		...(result[item[key]] || []),
+		item,
+	],
+  }), 
+  {},
+);
+
+// get objects from the cpapi host
 getallobjs()
 .then(indexobjs)
-.then(arrobjs)
-.then(dumpout)
+//.then(arrobjs)
+//.then(dumpout)
 .then(saveobjs)
-*/
 
 // read local dump file (for faster testing)
-//const mydatfile = require('./dumpit.json')
+/** 
+const mydatfile = require('./backup.json')
+indexobjs(mydatfile)
+.then(dumpout)
+*/
 //saveobjs(mydatfile)
 
 /** 
  * get api calls from staging and
  * dump to <doops>-staged.json file for later processing
- */
+ *
 gettype()
 .then(setit)
 .then(proctype)
 .then(dumpnow)
 .then(console.log)
+*/
 
 /**
  * post from local json data dump
  *
 const mydatfile = require('./add-staged.json')
 postcmd(mydatfile)
+.then(myClose)
 .then(console.log)
- */
+ * */
 
 /**
  * @function getallobjs
@@ -86,6 +101,7 @@ async function getallobjs () {
 		getobjs = getobjs.concat(await pagein(mytoken, dataobj.mycmd))
 		const myend = await myClose(mytoken)
 		console.log(await myend)
+		//await dump('ddd_', getobjs)
 		return await getobjs
 	} catch (error) {
 		console.log(error.response)
@@ -109,9 +125,10 @@ function sleep(ms) {
  */
 
 async function indexobjs (x) {
-	var myCpdb = Object.keys(x)
-	for (var t in myCpdb) {
+	//var myCpdb = Object.keys(x)
+	for (var t in x) {
 		myobjs = myobjs.concat(x[t].objects)
+		//myobjs.push((x[t].objects))
 	}
 	return await myobjs
 }
@@ -202,6 +219,7 @@ async function saveobjs (rebuild) {
 	}
 }
 
+
 async function gettype() {
 	let showtype = await etcd.getSync(netroot + 'api/')
 	//console.log(await showtype.body.node.nodes)
@@ -257,24 +275,24 @@ async function postcmd (x) {
 	for (var key in x) {
 		console.log(await key)
 		for (var vals in x[key]) {
-			//console.log(await key + ' ' + await x[key][vals].name)
+			console.log(await key + ' ' + await x[key][vals].name)
 			await postobj(mytoken, key, x[key][vals])
 			await sleep(250)
 			pubcnt++
 			if (pubcnt > 39) {
-				myout = await pubchange()
+				myout = await pubchange(mytoken)
 				console.log('publish ' + await JSON.stringify(myout))
 				pubcnt = 0
 			}
 		}
-		myout = await pubchange()
+		myout = await pubchange(mytoken)
 		console.log('completed ' + await key + ' ' + await JSON.stringify(myout))
 	}
-	const myend = await myClose(mytoken)
-	return await myout
+	//const myend = await myClose(mytoken)
+	return await mytoken
 }
 
-async function pubchange () {
+async function pubchange (mytoken) {
 		let mypubres = {}
 		var myApi = new CpApi(mytoken)
 		myApi.setCmd('publish')
