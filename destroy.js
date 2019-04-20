@@ -120,7 +120,7 @@ async function postcmd(x) {
 		for (var vals in x[key]) {
 			//console.log(await key + ' ' + await x[key][vals].name)
 			await delobj(mytoken, key, x[key][vals])
-			await sleep(260)
+			await sleep(270)
 			count++
 			if (count > 39) {
 				mypubsess = await pubchange()
