@@ -71,7 +71,7 @@ async function savekeys(x) {
 			if (mynet.subnet4) {
 				let netdir = netip.replace(/\./g, '/')
 				//let hostdir = '/' + mytype + '/' + myuid
-				mykey.key = netroot + netdir
+				mykey.key = netroot + netdir + '/' + myuid
 				mykey.value = Cpobj
 				await setKey(mykey)
 			}
@@ -87,7 +87,7 @@ async function savekeys(x) {
 			if (myhost['ipv4-address']) {
 				let netdir = hostip.replace(/\./g, '/')
 				//let hostdir = '/' + mytype + '/' + myuid
-				mykey.key = netroot + netdir
+				mykey.key = netroot + netdir + '/' + myuid
 				mykey.value = Cpobj
 				await setKey(mykey)
 			}
