@@ -28,10 +28,13 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "datalib": "^1.9.1",
+    "deep-object-diff": "^1.1.0",
+    "diff-json": "^1.1.0",
     "express": "^4.16.4",
     "json-groupby": "^1.1.0",
     "namor": "^1.1.1",
     "nest-by": "^1.0.0",
-    "node-etcd": "^7.0.0"
+    "node-etcd": "^7.0.0",
+    "variable-diff": "^1.1.0"
   }
 }
