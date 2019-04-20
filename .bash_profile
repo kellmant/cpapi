@@ -127,7 +127,7 @@ function job_color()
 promptls () {
     listit=$(ls -xF1u --color=always "$PWD") 
     cntit=$(echo "$listit" | wc -l)
-    pmptls=$(echo -e "$listit" | tr '\n' ' ' | cut -c -640) 
+    pmptls=$(echo -e "$listit" | tr '\n' ' ' | cut -c -96) 
     echo -en "${pmptls[@]}"
         if [ $cntit -gt 1 ] ; then
             echo -en " ${BWhite} . . . $cntit items ${NC}" 
@@ -176,7 +176,7 @@ promptgit () {
 	gitstat=$(echo $mygit | tail -n 1 | tr -d '\n')
     gitls=$(git status --porcelain -s)
     gitcnt=$(echo $gitls | wc -l)
-    gitinfo=$(echo -e "$gitls" | tr '\n' ' ' | cut -c -640)
+    gitinfo=$(echo -e "$gitls" | tr '\n' ' ' | cut -c -64)
         echo -en "${On_Red}${BCyan}Git Status:${NC} ${BCyan}$gitstat ${NC}"
         echo -en " $gitinfo "
         if [ $gitcnt -gt 1 ] ; then
@@ -340,13 +340,13 @@ PS1=""
 
 	# mark last output
 PS1=${PS1}"\[${BGreen}\]<= \[${Green}\]done \[${BYellow}\][\$(checkexit)\$(prompthist)\[${NC}\]\[${BYellow}\]] [runtime:\[${BWhite}\]\${clock_show}\[${BYellow}\]]\[${NC}\]"
-PS1=${PS1}"\[${Yellow}\][\[${BPurple}\]\@ \d\[${Yellow}\]]\[${NC}\]\n"
+PS1=${PS1}"\[${Yellow}\][\[${BPurple}\]\@ \d\[${Yellow}\]]\[${NC}\]"
         PS1=${PS1}"\n\[${Yellow}\][${systype}\[${BYellow}\]\[${sysback}\]\$(promptsys)\[${Yellow}\] role:\[${SU}\]\u\[${Yellow}\]]\[${NC}\]"
         PS1=${PS1}":\[${Yellow}\][cmd:\[${Green}\]\!\[${Yellow}\] done:\[${BRed}\]\#\[${Yellow}\]][Clan:\[${BGreen}\] \$(promptscore) \[${Yellow}\]]\[${NC}\]"
 	#PS1=${PS1}"\n\[${Yellow}\]|_/Session ID: \[${BBlue}\]\$(promptuid) \[${Yellow}\]API: \[${BGreen}\]\$(prompturl)\[${NC}\]\n"
 	# set the prompt
-    	PS1=${PS1}"\n\[${Yellow}\][\[${NC}\]\$(promptgit)\[${Yellow}\]]\n"
-    PS1=${PS1}"\[${Yellow}\]|_/DIR[\[${BWhite}\]\$(promptpwd) \[${Yellow}\]]"
+    PS1=${PS1}"\n\[${Yellow}\]|_/DIR[\[${BWhite}\]\$(promptpwd) \[${Yellow}\]]"
+    	PS1=${PS1}"\[${Yellow}\][\[${NC}\]\$(promptgit)\[${Yellow}\]]"
     	PS1=${PS1}"\n\[${Yellow}\]  |_/[\[${NC}\]\$(promptls)\[${Yellow}\]]"
 	PS1=${PS1}"\n\n\[${BGreen}\]=> \[${NC}\]"
         # Set title of current xterm:
