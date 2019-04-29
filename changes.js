@@ -43,6 +43,8 @@ var pastobj = new Date()
 var uptodate = dateobj.toISOString().slice(0, 19)
 pastobj.setDate(pastobj.getDate() - 7)
 var lastweek = pastobj.toISOString().slice(0, 19)
+var myreport = []
+var reportfile = '/web/report'
 
 var mychange = {}
 mychange.cmd = 'show-changes'
@@ -53,6 +55,9 @@ mytask.data = {}
 var mypush = {}
 mypush.cmd = 'show-gateways-and-servers'
 mypush.data = {}
+var myrev = {}
+myrev.cmd = 'show-last-published-session'
+myrev.data = {}
 
 var change = {}
 var mykeys = []
@@ -62,6 +67,8 @@ var backupfilename = '/web/changes'
 const backupdir = 'backup/install'
 const backupstat = 'backup/status'
 const backuptrig = 'needed'
+const backuprev = 'backup/rev'
+var myrevid = {}
 
 /* start by establishing a session token with the api
  * this uses single session for the whole script, but can be 
@@ -119,6 +126,7 @@ startsession()
  * for archive of changes between policy installs
  * */
 .then(dumpout)
+.then(savereport)
 
 
 /* just in case our program errors mid stream
@@ -163,20 +171,32 @@ async function endsession() {
 async function lastpush () {
 	let objarr = []
 	objarr = objarr.concat(await pagearr(mytoken, mypush.cmd))
+	await dump('lastgw', objarr)
 	let secgw = await objarr[0].objects
 	for (var x in secgw) {
 		if (secgw[x].policy['cluster-members-access-policy-revision']) {
-			let lastinstall = secgw[x].policy['access-policy-installation-date']['iso-8601']
+			var lastinstall = secgw[x].policy['access-policy-installation-date']['iso-8601']
+			myrevid = secgw[x].policy['cluster-members-access-policy-revision'][0].revision.uid
+			var lastrev = await getval(backuprev)
+			if (myrevid !== lastrev) {
+				console.log(myrevid + ' <= ' + lastrev)
+				await setkey(backuprev, myrevid)
+			}
 			lastinstall = lastinstall.slice(0, 16)
 			let lastbackup = await getval(backupdir)
 			if (lastinstall === lastbackup) {
 				console.log('no new install to backup')
-				console.log('showing changes from last install at ' + lastinstall)
+				console.log(myrevid + 'showing published changes from last install at ' + lastinstall)
 				mychange.data = { 'from-date': lastinstall, 'to-date': uptodate }
+				//myreport[lastinstall] = []
+				//myreport.push(myout)
 				return mychange
 			}
 			mychange.data = { 'from-date': lastbackup, 'to-date': lastinstall }
 			console.log(' PUBLISHED CHANGES NOW IN ACTIVE POLICY at ' + lastinstall)
+			//let myout = lastinstall + ' SHOW INSTALLED CHANGES' 
+			//myreport.push(myout)
+			//myreport[lastinstall] = []
 			await delkey(netroot)
 			netroot = 'change/'
 			backupfilename = backupfilename + '_' + lastinstall
@@ -195,10 +215,18 @@ async function reqdata () {
 
 async function checktask () {
 	let checkit = {}
+	var chkcnt = 1000
 	do {
+		await sleep(chkcnt)
+		//chkcnt = Number(chkcnt) + 143
 		checkit = await grabin(mytoken, mytask)
-		process.stdout.write(checkit.tasks[0].status + ' ' + checkit.tasks[0]['progress-percentage'] + '% COMPLETE ' + checkit.tasks[0]['progress-description'] + '                    \r')
-		await sleep(4297)
+		let humantime = Number(chkcnt) / 1000
+		process.stdout.write(checkit.tasks[0].status + ' ' + checkit.tasks[0]['progress-percentage'] + '% COMPLETE ' + checkit.tasks[0]['progress-description'] + ' waiting  (' + humantime + ')sec' + '                    \r')
+		chkcnt = Number(chkcnt) + Number(chkcnt)
+		if (chkcnt > 120000) {
+			console.log(chkcnt + ' Exceeded timeout waiting for task to complete on the manager!')
+			checkit.tasks[0].status = 'succeeded'
+		}
 	}
 	while (checkit.tasks[0].status !== 'succeeded') 
 	console.log(checkit.tasks[0].status + ' ' + checkit.tasks[0]['progress-percentage'] + '% COMPLETE ' + checkit.tasks[0]['progress-description'])
@@ -206,7 +234,7 @@ async function checktask () {
 	let getchange = await grabin(mytoken, mytask)
 	let retchange = sortchange(getchange.tasks[0]['task-details'])
 	change = sortchange(retchange[0].changes)
-	await dump('mychange', change)
+	//await dump('mychange', change)
 	//console.dir(change)
 	return await change
 }
@@ -256,7 +284,10 @@ async function showmods () {
 			delete oldobj['meta-info']['last-modify-time']
 			mychanges[nameobj] = mychanges[nameobj].concat(changesets.diff(oldobj, newobj))
 			let shdiff = diff(oldobj, newobj)
-			console.log(modobj + ' MODIFIED ' + typeobj)
+			//let myout = isotime + ' ' + modobj + ' MODIFIED ' + typeobj + ' ' + uidobj + ' ' + nameobj + ' ' + JSON.stringify(shdiff)
+			let myout = { 'date': isotime, 'revision': myrevid, 'admin': modobj, 'action': mycall, 'type': typeobj, 'uid': uidobj, 'name': nameobj, 'changed': shdiff.changed, 'ops': mychanges[nameobj] }
+			myreport.push(myout)
+			console.log(modobj + ' MODIFIED ' + typeobj + ' ' + uidobj)
 			console.log(nameobj + ': ' + shdiff.text)
 			let keyroot = localroot + modobj + '/UPDATE/' + typeobj + '/' + nameobj
 			let keydat = JSON.stringify(mychanges[nameobj])
@@ -287,7 +318,10 @@ async function showadds () {
 			let timedir = isotime.split('T')
 			timedir[0] = timedir[0].replace(/-/g, '/')
 			let localroot = netroot + timedir[0] + '/' + timedir[1] + '/'
-			console.log(modobj + ' CREATED ' + typeobj + ' ' + nameobj) 
+			//let myout = isotime + ' ' + modobj + ' CREATED ' + typeobj + ' ' + uidobj + ' ' + nameobj
+			let myout = { 'date': isotime, 'revision': myrevid, 'admin': modobj, 'action': mycall, 'type': typeobj, 'uid': uidobj, 'name': nameobj }
+			myreport.push(myout)
+			console.log(modobj + ' CREATED ' + typeobj + ' ' + nameobj + ' ' + uidobj) 
 			delete mydat[obj]['domain']
 			delete mydat[obj]['meta-info']
 			let keyroot = localroot + modobj + '/create/' + typeobj + '/' + nameobj
@@ -318,7 +352,10 @@ async function showdels (x) {
 			let timedir = isotime.split('T')
 			timedir[0] = timedir[0].replace(/-/g, '/')
 			let localroot = netroot + timedir[0] + '/' + timedir[1] + '/'
-			console.log(modobj + ' to DELETE ' + typeobj + ' ' + nameobj) 
+			//let myout = isotime + ' ' + modobj + ' DELETED ' + typeobj + ' ' + uidobj + ' ' + nameobj
+			let myout = { 'date': isotime, 'revision': myrevid, 'admin': modobj, 'action': mycall, 'type': typeobj, 'uid': uidobj, 'name': nameobj }
+			myreport.push(myout)
+			console.log(modobj + ' DELETED ' + typeobj + ' ' + nameobj + ' ' + uidobj) 
 			delete mydat[obj]['domain']
 			delete mydat[obj]['meta-info']
 			let keyroot = localroot + modobj + '/delete/' + typeobj + '/' + nameobj
@@ -363,6 +400,36 @@ async function dumpout(jsondata) {
 	console.log(' Published Changes: ')
 	console.log(addcnt + ' created ; ' + modcnt + ' modified ; ' + delcnt + ' deleted ;')
 	console.log('=====================================')
+	return await jsondata
+}
+
+//async function sortreport() {
+	//myreport.sort(function(a, b) {
+	 //   a = a.date
+	  //  b = b.date
+	   // return a>b ? -1 : a<b ? 1 : 0;
+	//myreport.sort(function(a,b){return a.date.getTime() - b.date.getTime()});
+	//myreport.sort( (a,b) => a.date.localeCompare(b.date) )
+//	});
+//}
+
+async function savereport () {
+	try {
+	//await fs.unlinkSync('report.json')
+	//for (var obj in myreport[lastinstall]) {
+	//	console.log(JSON.stringify(myreport[lastinstall][obj]))
+	//	writereport(JSON.stringify(myreport[lastinstall][obj]))
+	//}
+		await dump(reportfile, myreport)
+	return await myreport
+	} catch (err) {
+		return
+	}
+}
+
+async function writereport(myline) {
+	await fs.appendFileSync('report.txt', myline, "UTF-8",{'flags': 'a+'})
+	await fs.appendFileSync('report.txt', '\n', "UTF-8",{'flags': 'a+'})
 	return
 }
 
@@ -382,8 +449,12 @@ async function getkey(key) {
 }
 
 async function getval(key) {
-	let showkey = await etcd.getSync(key)
-	return await showkey.body.node.value
+	try {
+		let showkey = await etcd.getSync(key)
+		return await showkey.body.node.value
+	} catch (err) {
+		return (err)
+	}
 }
 
 async function setkey (key, value) {
