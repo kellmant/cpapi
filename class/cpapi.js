@@ -1,5 +1,5 @@
 "use strict";
-/**
+/*
  * ID:v1.2 102218
  * class/cpapi.js
  * Class Constructor
@@ -22,15 +22,31 @@ const funcall = `../fun/${scriptname}`
 const myApi = require(funcall)
 
 
+/**
+ * Process Check Point API callouts 
+ * @constructor 
+ * @param {Object} CPapi Check Point JSON representation
+ * @param {String} CPapi.method API method (always post)
+ * @param {String} CPapi.headers apply mytoken.sid to X-chkp-sid header
+ * @param {String} CPapi.baseURL URL of API call
+ * @param {Object} CPapi.data object holder for JSON callout data
+ */
 module.exports = class Cpapi {
-
 	constructor(that) {
 		this.method = 'post'
 		this.headers = { 'X-chkp-sid': that.sid }
 		this.baseURL = that.url + '/'
 		this.data = {}
 	}
-
+/**
+ * cntObj Function
+ * count the returned objects in the paging function from Check Point API
+ * @param {Object} CPapi Check Point JSON representation
+ * @param {Object} CPapi.data object holder for JSON callout data
+ * @param {Number} CPapi.data.from from object count
+ * @param {Number} CPapi.data.to to object count
+ * @param {Number} CPapi.data.total of total object count
+ */
 	cntObj (from, to, total) {
 		this.data.from = from
 		this.data.to = to
@@ -38,12 +54,25 @@ module.exports = class Cpapi {
 		return this
 	}
 
+/**
+ * setCnt Function
+ * @param {Object} CPapi Check Point JSON representation
+ * @param {Object} CPapi.data object holder for JSON callout data
+ * @param {Number} CPapi.data.offset collect object from index
+ * @param {Number} CPapi.data.limit maximum objects to retrieve (500 limit)
+ */
 	setCnt (offset, limit) {
 		this.data.offset = offset
 		this.data.limit = limit
 		return this
 	}
 
+/**
+ * setDetail Function
+ * @param {Object} CPapi Check Point JSON representation
+ * @param {Object} CPapi.data object holder for JSON callout data
+ * @param {String} CPapi.data.details-level full, standard or uid level of object data
+ */
 	setDetail (detail) {
 		this.data['details-level'] = detail
 		return this
@@ -54,6 +83,18 @@ module.exports = class Cpapi {
 		return this
 	}
 
+/**
+ * addData Function
+ * @param {Object} CPapi Check Point JSON representation
+ * @param {Object} CPapi.data object holder for JSON callout data
+ * @param {String} CPapi.data.filter filter parameters of returned objects
+ * @param {String} CPapi.data.type object type
+ * @param {String} CPapi.data.name object name
+ * @param {String} CPapi.data.uid object uid 
+ * @param {String} CPapi.data.policy-package policy name (used for installs)
+ * @param {String} CPapi.data.revision policy revision ID (used for installs)
+ * @param {String} CPapi.data.targets policy install targets (used for installs)
+ */
 	addData (that) {
 		if (that.filter) {
 		this.data.filter = that.filter
